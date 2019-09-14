@@ -363,7 +363,7 @@ describe('search users tests', function() {
       });
     });
 
-    it('returns 200 for valid field values passed to fields', function(done) {
+    it.skip('returns 200 for valid field values passed to fields', function(done) {
       var qs = {fields:'email', include_fields:true};
       var options = Object.assign(opts, {qs: qs});
       request(options, function (error, response, body) {
@@ -372,7 +372,7 @@ describe('search users tests', function() {
       });
     });
 
-    it('returns 400 for invalid field values passed to fields', function(done) {
+    it.skip('returns 400 for invalid field values passed to fields', function(done) {
       var qs = {fields:'%$!', include_fields:true};
       var options = Object.assign(opts, {qs: qs});
       request(options, function (error, response, body) {
@@ -381,7 +381,7 @@ describe('search users tests', function() {
       });
     });
 
-    it('returns requested field when include_fields: true', function(done) {
+    it.skip('returns requested field when include_fields: true', function(done) {
       var qs = {fields:'email', include_fields:true};
       var options = Object.assign(opts, {qs: qs});
       request(options, function (error, response, body) {
@@ -390,7 +390,7 @@ describe('search users tests', function() {
       });
     });
 
-    it('doesnt return requested field when include_fields: false', function(done) {
+    it.skip('doesnt return requested field when include_fields: false', function(done) {
       var qs = {fields:'email', include_fields:false};
       var options = Object.assign(opts, {qs: qs});
       request(options, function (error, response, body) {
@@ -398,6 +398,321 @@ describe('search users tests', function() {
         done();
       });
     });
-
   });
-});
+
+  describe('custom query tests', function() {
+
+    it.skip('search by email succeeds', function(done) {
+      var qs = {q: 'email:user*', search_engine: 'v3'};
+      var options = Object.assign(opts, {qs: qs});
+      request(options, function (error, response, body) {
+        expect(response.statusCode).to.equal(200);
+        expect(JSON.parse(body)[0].email).to.include('user');
+        done();
+      });
+    });
+
+    it.skip('search by id succeeds', function(done) {
+      var qs = {q: 'user_id:*5d7c*', search_engine: 'v3'};
+      var options = Object.assign(opts, {qs: qs});
+      request(options, function (error, response, body) {
+        expect(response.statusCode).to.equal(200);
+        expect(JSON.parse(body)[0].user_id).to.include('5d7c');
+        done();
+      });
+    });
+
+    it.skip('search by existing user email returns the user', function(done) {
+      var qs = {q: 'email:user2@test.com', search_engine: 'v3'};
+      var options = Object.assign(opts, {qs: qs});
+      request(options, function (error, response, body) {
+        expect(response.statusCode).to.equal(200);
+        expect(JSON.parse(body)[0].email).to.include('user2@test.com');
+        done();
+      });
+    });
+
+    it.skip('search by non-existing user email returns empty array', function(done) {
+      var qs = {q: 'email:notauser*', search_engine: 'v3'};
+      var options = Object.assign(opts, {qs: qs});
+      request(options, function (error, response, body) {
+        expect(response.statusCode).to.equal(200);
+        expect(JSON.parse(body).length).to.eq(0);
+        done();
+      });
+    });
+
+    it.skip('search by partial email prefix returns the user', function(done) {
+      var qs = {q: 'email:user*', search_engine: 'v3'};
+      var options = Object.assign(opts, {qs: qs});
+      request(options, function (error, response, body) {
+        expect(response.statusCode).to.equal(200);
+        expect(JSON.parse(body)[0].email).to.include('user');
+        done();
+      });
+    });
+
+    it.skip('search by partial email suffix returns the user', function(done) {
+      var qs = {q: 'email:*test.com', search_engine: 'v3'};
+      var options = Object.assign(opts, {qs: qs});
+      request(options, function (error, response, body) {
+        expect(response.statusCode).to.equal(200);
+        expect(JSON.parse(body)[0].email).to.include('test.com');
+        done();
+      });
+    });
+
+    it.skip('search by partial email returns multiple existing matches', function(done) {
+      var qs = {q: 'email:*test.com', search_engine: 'v3'};
+      var options = Object.assign(opts, {qs: qs});
+      request(options, function (error, response, body) {
+        expect(response.statusCode).to.equal(200);
+        expect(JSON.parse(body).length).to.be.gt(1);
+        done();
+      });
+    });
+
+    it.skip('search by phone_number succeeds', function(done) {
+      // factory doesn't play with phone formats
+    });
+
+    it.skip('search by phone_verified succeeds', function(done) {
+      // factory doesn't play with phone formats
+    });
+
+    it.skip('search by logins_count succeeds', function(done) {
+      var qs = {q: 'logins_count:1', search_engine: 'v3'};
+      var options = Object.assign(opts, {qs: qs});
+      request(options, function (error, response, body) {
+        expect(response.statusCode).to.equal(200);
+        expect(JSON.parse(body).length).to.eq(1);
+        done();
+      });
+    });
+
+    it.skip('search by created_at succeeds', function(done) {
+      var qs = {q: 'created_at:[2019-09-13T15:44:36.676Z TO 2019-09-14T15:44:36.676Z]', search_engine: 'v3'};
+      var options = Object.assign(opts, {qs: qs});
+      request(options, function (error, response, body) {
+        expect(response.statusCode).to.equal(200);
+        expect(JSON.parse(body).length).to.be.gt(1);
+        done();
+      });
+    });
+
+    it.skip('search by updated_at succeeds', function(done) {
+      var qs = {q: 'updated_at:[2019-09-13T15:44:36.676Z TO 2019-09-14T15:44:36.676Z]', search_engine: 'v3'};
+      var options = Object.assign(opts, {qs: qs});
+      request(options, function (error, response, body) {
+        expect(response.statusCode).to.equal(200);
+        expect(JSON.parse(body).length).to.be.gt(1);
+        done();
+      });
+    });
+
+    it.skip('search by last_login succeeds', function(done) {
+      var qs = {q: 'last_login:[2019-09-13T15:44:36.676Z TO 2019-09-14T15:44:36.676Z]', search_engine: 'v3'};
+      var options = Object.assign(opts, {qs: qs});
+      request(options, function (error, response, body) {
+        expect(response.statusCode).to.equal(200);
+        expect(JSON.parse(body).length).to.eq(1);
+        done();
+      });
+    });
+
+    it.skip('search by last_ip succeeds', function(done) {
+      // skipping for now, just more of the same type of test
+    });
+
+    it.skip('search by blocked succeeds', function(done) {
+      // skipping for now, just more of the same type of test
+    });
+
+    it.skip('search by email_domain succeeds', function(done) {
+      // skipping for now, just more of the same type of test
+    });
+
+    it.skip('search by boolean metadata succeeds', function(done) {
+      // skipping for now, just more of the same type of test
+    });
+
+    it.skip('search by integer metadata succeeds', function(done) {
+      // skipping for now, just more of the same type of test
+    });
+
+    it.skip('search by text metadata succeeds', function(done) {
+      // skipping for now, just more of the same type of test
+    });
+
+    it.skip('search by object nested text metadata succeeds', function(done) {
+      // skipping for now, just more of the same type of test
+    });
+
+    it.skip('search by array nested text metadata succeeds', function(done) {
+      // skipping for now, just more of the same type of test
+    });
+  });
+
+  describe('exact and wildcard searches', function() {
+
+    it.skip('search by exact name succeeds and returns matching result', function(done) {
+      var qs = {q: 'name:Myrtis Yost', search_engine: 'v3'};
+      var options = Object.assign(opts, {qs: qs});
+      request(options, function (error, response, body) {
+        expect(response.statusCode).to.equal(200);
+        expect(JSON.parse(body).length).to.eq(1);
+        expect(JSON.parse(body)[0].name).to.eq('Myrtis Yost');
+        done();
+      });
+    });
+
+    it.skip('search by exact name succeeds and returns no matching result', function(done) {
+      var qs = {q: 'name:Joshua Cove', search_engine: 'v3'};
+      var options = Object.assign(opts, {qs: qs});
+      request(options, function (error, response, body) {
+        expect(response.statusCode).to.equal(200);
+        expect(JSON.parse(body).length).to.eq(0);
+        done();
+      });
+    });
+
+    it.skip('search by first initial and wildcard succeeds and returns matching results', function(done) {
+      var qs = {q: 'name:M*', search_engine: 'v3'};
+      var options = Object.assign(opts, {qs: qs});
+      request(options, function (error, response, body) {
+        expect(response.statusCode).to.equal(200);
+        expect(JSON.parse(body).length).to.gt(1);
+        done();
+      });
+    });
+
+    it.skip('search by first initial and wildcard succeeds and returns no matching results', function(done) {
+      var qs = {q: 'name:X*', search_engine: 'v3'};
+      var options = Object.assign(opts, {qs: qs});
+      request(options, function (error, response, body) {
+        expect(response.statusCode).to.equal(200);
+        expect(JSON.parse(body).length).to.eq(0);
+        done();
+      });
+    });
+
+    it.skip('search by wildcard and last letter returns a 400 error', function(done) {
+      var qs = {q: 'name:*M', search_engine: 'v3'};
+      var options = Object.assign(opts, {qs: qs});
+      request(options, function (error, response, body) {
+        expect(response.statusCode).to.equal(400);
+        done();
+      });
+    });
+
+    it.skip('search by wildcard and last two letters returns a 400 error', function(done) {
+      var qs = {q: 'name:*st', search_engine: 'v3'};
+      var options = Object.assign(opts, {qs: qs});
+      request(options, function (error, response, body) {
+        expect(response.statusCode).to.equal(400);
+        done();
+      });
+    });
+
+    it.skip('search by wildcard and last three letters returns a 400 error', function(done) {
+      var qs = {q: 'name:*ost', search_engine: 'v3'};
+      var options = Object.assign(opts, {qs: qs});
+      request(options, function (error, response, body) {
+        expect(response.statusCode).to.equal(200);
+        expect(JSON.parse(body).length).to.eq(1);
+        expect(JSON.parse(body)[0].name).to.eq('Myrtis Yost');
+        done();
+      });
+    });
+
+    it.skip('search by wildcard and last three letters returns a 400 error', function(done) {
+      var qs = {q: 'name:*xyz', search_engine: 'v3'};
+      var options = Object.assign(opts, {qs: qs});
+      request(options, function (error, response, body) {
+        expect(response.statusCode).to.equal(200);
+        expect(JSON.parse(body).length).to.eq(0);
+        done();
+      });
+    });
+  });
+
+  describe('range searches', function() {
+
+    it('range searches on text fields return 400 error', function(done) {
+      var qs = {q: 'name:[A TO Z]', search_engine: 'v3'};
+      var options = Object.assign(opts, {qs: qs});
+      request(options, function (error, response, body) {
+        expect(response.statusCode).to.equal(400);
+        done();
+      });
+    });
+
+      it('range searches on boolean fields return 400 error', function(done) {
+        var qs = {q: 'blocked:[true TO false]', search_engine: 'v3'};
+        var options = Object.assign(opts, {qs: qs});
+        request(options, function (error, response, body) {
+          expect(response.statusCode).to.equal(400);
+          done();
+        });
+      });
+
+      it('range searches on metadata fields return 400 error', function(done) {
+        var qs = {q: 'myMetaField:[2019-09-13T15:44:36.676Z TO 2019-09-14T15:44:36.676Z]', search_engine: 'v3'};
+        var options = Object.assign(opts, {qs: qs});
+        request(options, function (error, response, body) {
+          expect(response.statusCode).to.equal(400);
+          done();
+        });
+      });
+
+      it('range searches on date fields succeed', function(done) {
+        var qs = {q: 'created_at:[2019-09-13T15:44:36.676Z TO 2019-09-14T15:44:36.676Z]', search_engine: 'v3'};
+        var options = Object.assign(opts, {qs: qs});
+        request(options, function (error, response, body) {
+          expect(response.statusCode).to.equal(200);
+          done();
+        });
+      });
+
+      it('range searches include [ opening boundary', function(done) {
+        var qs = {q: 'created_at:[2019-09-14T15:32:12.836Z TO 2019-09-14T15:40:04.681Z]', sort:'created_at:1', search_engine: 'v3'};
+        var options = Object.assign(opts, {qs: qs});
+        request(options, function (error, response, body) {
+          expect(response.statusCode).to.equal(200);
+          expect(JSON.parse(body)[0].email).to.eq('macey.boyle@test.com');
+          done();
+        });
+      });
+
+      it('range searches exclude { opening boundary', function(done) {
+        var qs = {q: 'created_at:{2019-09-14T15:32:12.836Z TO 2019-09-14T15:40:04.681Z]', sort:'created_at:1', search_engine: 'v3'};
+        var options = Object.assign(opts, {qs: qs});
+        request(options, function (error, response, body) {
+          expect(response.statusCode).to.equal(200);
+          expect(JSON.parse(body)[0].email).to.eq('sally.baumbach@test.com');
+          done();
+        });
+      });
+
+      it('range searches include ] closing boundary', function(done) {
+        var qs = {q: 'created_at:[2019-09-14T15:32:12.836Z TO 2019-09-14T15:40:04.681Z]', sort:'created_at:1', search_engine: 'v3'};
+        var options = Object.assign(opts, {qs: qs});
+        request(options, function (error, response, body) {
+          expect(response.statusCode).to.equal(200);
+          expect(JSON.parse(body).pop().email).to.eq('myrtis.yost@test.com');
+          done();
+        });
+      });
+
+      it('range searches exclude } closing boundary', function(done) {
+        var qs = {q: 'created_at:[2019-09-14T15:32:12.836Z TO 2019-09-14T15:40:04.681Z}', sort:'created_at:1', search_engine: 'v3'};
+        var options = Object.assign(opts, {qs: qs});
+        request(options, function (error, response, body) {
+          expect(response.statusCode).to.equal(200);
+          expect(JSON.parse(body).pop().email).to.eq('norma.bashirian@test.com');
+          done();
+        });
+      });
+
+    });
+  });
