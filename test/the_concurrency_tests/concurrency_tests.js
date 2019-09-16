@@ -7,7 +7,6 @@ var configs = require('../support/configs.js');
 const token = configs.token;
 const headers = {Authorization: `${token}`, Accept: 'application/json'};
 
-
 describe('concurrency test', function() {
   tags('P1').it('should return 429 for concurrent requests', function(done) {
     var errors = [];
